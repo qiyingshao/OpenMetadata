@@ -108,7 +108,7 @@ const TeamsPage = () => {
     try {
       const { data } = await getTeams({
         parentTeam: parentTeam ?? 'organization',
-        include: Include.All,
+        include: showDeletedTeam ? Include.All : Include.NonDeleted,
       });
 
       const modifiedTeams: Team[] = data.map((team) => ({
@@ -134,7 +134,7 @@ const TeamsPage = () => {
     try {
       const { data } = await getTeams({
         parentTeam: parentTeam ?? 'organization',
-        include: Include.All,
+        include: showDeletedTeam ? Include.All : Include.NonDeleted,
         fields: [
           TabSpecificField.USER_COUNT,
           TabSpecificField.CHILDREN_COUNT,
@@ -485,6 +485,12 @@ const TeamsPage = () => {
       fetchAllTeamsAdvancedDetails(false, fqn);
     }
   }, [isFetchAllTeamAdvancedDetails, fqn]);
+
+  useEffect(() => {
+    if (fqn) {
+      fetchAllTeamsAdvancedDetails(false, fqn);
+    }
+  }, [showDeletedTeam, fqn]);
 
   if (isPageLoading) {
     return <Loader />;
